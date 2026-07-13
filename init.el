@@ -1,32 +1,63 @@
-;; init.el --- The new config file
-
-;; Increase GC Threshold
-(setq gc-cons-threshold 20000000)
-
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
-;;;; Put Customize stuff into separate file
-(setq custom-file (concat user-emacs-directory (convert-standard-filename "custom.el")))
-(load custom-file 'noerror)
+(setq custom-file "~/.config/emacs/custom.el")
+(load custom-file)
 
-;; Calls (package-initialize)
 (require 'init-core)
-(require 'init-evil)
 (require 'init-appearance)
-(require 'init-theme)
 (require 'init-editor)
-(require 'init-navigation)
 (require 'init-utils)
-(require 'init-window)
-(require 'init-buffer)
+(require 'init-vc)
+(require 'init-lisp)
 (require 'init-lsp)
-(require 'init-c++)
-;; (require 'init-tex)
-(require 'init-rust)
-(require 'init-web)
-(require 'init-auto-insert)
-(require 'init-org)
-(require 'init-haskell)
+(require 'init-lang)
 
-;; Reset GC Threshold
-(setq gc-cons-threshold 800000)
+;; (use-package evil
+;;   :straight t
+;;   :custom
+;;   (evil-undo-system 'undo-redo)
+;;   :init
+;;   (setq evil-want-keybinding nil
+;;         evil-want-integration t)
+;;   :config
+;;   (evil-mode 1))
+
+;; (use-package evil-collection
+;;   :straight t
+;;   :after evil
+;;   :config
+;;   (evil-collection-init))
+
+;; (straight-use-package 'tree-sitter-langs)
+;; (use-package tree-sitter
+;;   :straight t
+;;   :config
+;;   (global-tree-sitter-mode)
+;;   (tree-sitter--handle-dependent tree-sitter-hl-mode
+;;     #'tree-sitter-hl--setup
+;;     #'tree-sitter-hl--teardown))
+
+
+;; (straight-use-package 'dash)
+;; (straight-use-package 'avy)
+;; (straight-use-package 'pcre2el)
+;; (use-package hel
+;;   :straight '(hel :host github :repo "anuvyklack/hel")
+;;   :config
+;;   (hel-mode 1))
+
+;; (use-package hel-leader
+;;   :straight (hel-leader :host github :repo "anuvyklack/hel-leader")
+;;   :after hel)
+
+;; (use-package hel-ghostel
+;;   :straight '(hel-ghostel :host github :repo "anuvyklack/hel-ghostel")
+;;   :after (ghostel hel))
+
+;; (use-package evil-ghostel
+;;   :straight t
+;;   :after (ghostel evil)
+;;   :hook (ghostel-mode . evil-ghostel-mode))
+
+;; (use-package majutsu
+;;   :straight (:host github :repo "0WD0/majutsu"))

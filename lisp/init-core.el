@@ -1,10 +1,6 @@
 ;;;; General settings
-;; Fix scrolling
-(setq mouse-wheel-scroll-amount '(5)
-      mouse-wheel-progressive-speed nil)
-
 ;; Truncate long lines
-(setq-default truncate-lines 1)
+(setq-default truncate-lines t)
 
 ;; Backup files
 (setq backup-directory-alist `(("." . "~/.saves"))
@@ -13,55 +9,54 @@
       kept-new-versions 4
       version-control t)
 
-;;;; Initialize package.el
-(require 'package)
-(setq package-user-dir "~/.emacs.d/elpa")
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+;; Packages
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; Make sure use-package is installed
-(defun ensure-package (package &optional refresh)
-  (unless (package-installed-p package)
-    (message "Install missing package %s" package)
-    (when refresh
-      (package-refresh-contents))
-    (package-install package)))
+(straight-use-package 'use-package)
 
-(require 'cl-lib)
-(defun xy//ensure-packages (packages)
-  "Ensure that the specified list of packages are installed and loaded"
-  (let ((pkgs (cl-map 'list (lambda (p) (cons p (package-installed-p p))) packages)))
-    (when (cl-notevery #'cdr pkgs)
-      (package-refresh-contents))
-    (dolist (p pkgs)
-      (unless (cdr p)
-        (package-install (car p)))
-      (require (car p)))))
+(setq straight-use-package-by-default t)
 
-(xy//ensure-packages
- '(bind-key
-   use-package))
+(setq straight-built-in-pseudo-packages
+      (seq-union
+       straight-built-in-pseudo-packages
+       '(project flymake)))
 
-(setq use-package-always-defer t)
-(setq use-package-always-ensure t)
-(setq use-package-compute-statistics t)
-
-(use-package diminish
+(use-package no-littering
   :demand t
   :config
-  (diminish 'eldoc-mode)
-  (diminish 'subword-mode)
-  (diminish 'auto-revert-mode)
-  (diminish 'abbrev-mode))
+  (require 'recentf)
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-var-directory))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-etc-directory)))
 
-(use-package general
-  :demand t
+(use-package winner
+  :straight nil
   :config
-  (general-create-definer my-leader-def
-    :keymaps 'override
-    :states '(normal visual)
-    :prefix "SPC"))
+  (winner-mode))
+
+(use-package recentf
+  :straight nil
+  :config
+  (recentf-mode))
+
+(use-package savehist
+  :straight nil
+  :config
+  (savehist-mode))
 
 (provide 'init-core)
-
