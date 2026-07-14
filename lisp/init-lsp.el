@@ -1,4 +1,5 @@
-(use-package eglot)
+(use-package eglot
+  :straight nil)
 
 (use-package consult-eglot
   :after (consult eglot))
