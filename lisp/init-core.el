@@ -59,4 +59,8 @@
   :config
   (savehist-mode))
 
+(use-package direnv
+ :config
+ (direnv-mode))
+
 (provide 'init-core)
